@@ -36,6 +36,14 @@ public class InputUtils {
         return valor;
     }
 
+    public static int getInt(int min, int max) {
+        while (true) {
+            int numero = getInt();
+            if (numero > min && numero < max) return numero;
+            System.out.println("Digite um número entre " + min + " e " + max);
+        }
+    }
+
     public static String getString(String mensagem) {
         String valor = "";
         while (valor.isBlank()) {

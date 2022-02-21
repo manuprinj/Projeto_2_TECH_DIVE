@@ -13,6 +13,7 @@ public class Modulo {
     private String tarefaValidacao;
     private LocalDate prazoLimite;
     private StatusModulo statusModulo;
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
 
     public Modulo(Trilha trilha, String nomeModulo, String habilidades, String tarefaValidacao, LocalDate prazoLimite,
             StatusModulo statusModulo) {
@@ -22,6 +23,10 @@ public class Modulo {
         this.tarefaValidacao = tarefaValidacao;
         this.prazoLimite = prazoLimite;
         this.statusModulo = statusModulo;
+    }
+
+    public boolean isModuloEmAvaliacao() {
+        return statusModulo == StatusModulo.FASE_DE_AVALIACAO && !prazoLimite.isBefore(LocalDate.now());
     }
 
     public Trilha getTrilha() {
@@ -70,5 +75,13 @@ public class Modulo {
 
     public void setStatus(StatusModulo statusModulo) {
         this.statusModulo = statusModulo;
+    }
+
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
     }
 }

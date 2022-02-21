@@ -9,6 +9,7 @@ import static utils.InputUtils.getString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import types.Estados;
 import types.PerfilAcesso;
@@ -21,7 +22,6 @@ import utils.DateUtils;
 
 public class Main {
 
-    public static int opcaoTipoEmpresa;
     public static List<Empresa> empresas = new ArrayList<>();
     public static List<Trabalhador> trabalhadores = new ArrayList<>();
     public static List<Usuario> usuarios = new ArrayList<>();
@@ -39,8 +39,8 @@ public class Main {
             System.out.println("8 - Alterar Funçao do Trabalhador");
             System.out.println("9 - Alterar Setor/Area do Trabalhador");
             System.out.println("10 - Alterar Empresa do Trabalhador");
-            System.out.println("11 - Sair");
-            int tipoOperacao = getInt();
+            System.out.println("11 - Voltar");
+            int tipoOperacao = getInt(1, 11);
 
             if (tipoOperacao == 1) cadastrarEmpresa();
             else if (tipoOperacao == 2) cadastrarTrilha();
@@ -53,8 +53,32 @@ public class Main {
             else if (tipoOperacao == 9) alterarSetorArea();
             else if (tipoOperacao == 10) alterarEmpresaTrabalhador();
             else if (tipoOperacao == 11) return;
-            else System.out.println("Digite uma opção válida!!");
+        }
+    }
 
+    private static void menuOperacional() {
+        while (true) {
+            System.out.println("1 - Realizar Processo de Avaliação");
+            System.out.println("2 - Relatórios");
+            System.out.println("3 - Voltar");
+            int tipoOperacao = getInt(1, 3);
+
+            if (tipoOperacao == 1) realizarProcessoAvaliacao();
+            else if (tipoOperacao == 2) menuRelatorio();
+            else if (tipoOperacao == 3) return;
+        }
+    }
+
+    private static void menuRh() {
+        while (true) {
+            System.out.println("1 - Acompanhar Processo de Avaliação");
+            System.out.println("2 - Relatórios");
+            System.out.println("3 - Voltar");
+            int tipoOperacao = getInt(1, 3);
+
+            if (tipoOperacao == 1) acompanharProcessoAvaliacao();
+            else if (tipoOperacao == 2) menuRelatorio();
+            else if (tipoOperacao == 3) return;
         }
     }
 
@@ -75,16 +99,14 @@ public class Main {
         RegionaisSENAI regionalSenai = getRegional();
 
         Empresa empresa;
-        if (opcaoTipoEmpresa == TipoEmpresa.FILIAL.ordinal()) {
+        if (tipoEmpresa == TipoEmpresa.FILIAL) {
             String nomeFilial = getString("Digite o nome da Filial:");
             empresa = new Empresa(nome, cnpj, tipoEmpresa, nomeFilial, segmento, cidade, estado, regionalSenai);
-            empresas.add(empresa);
-            System.out.println(empresa);
         } else {
             empresa = new Empresa(nome, cnpj, tipoEmpresa, segmento, cidade, estado, regionalSenai);
-            empresas.add(empresa);
-            System.out.println(empresa);
         }
+        empresas.add(empresa);
+        System.out.println(empresa);
 
         while (true) {
             String isContinuar = getString("Você deseja cadastrar uma nova trilha para esta empresa? (S/N)");
@@ -192,7 +214,7 @@ public class Main {
         //        Anotacoes;
 
         Trabalhador trabalhador =
-                new Trabalhador(nomeTrabalhador, cpf, empresa, setorArea, funcao, data, trilhas, modulos, null);
+                new Trabalhador(nomeTrabalhador, cpf, empresa, setorArea, funcao, data, trilhas, modulos);
         trabalhadores.add(trabalhador);
     }
 
@@ -218,7 +240,7 @@ public class Main {
         for (TipoEmpresa value : TipoEmpresa.values()) {
             System.out.println(value.ordinal() + 1 + " - " + value.getNome());
         }
-        opcaoTipoEmpresa = getInt() - 1;
+        int opcaoTipoEmpresa = getInt(1, TipoEmpresa.values().length) - 1;
         return TipoEmpresa.values()[opcaoTipoEmpresa];
     }
 
@@ -227,7 +249,7 @@ public class Main {
         for (Segmentos value : Segmentos.values()) {
             System.out.println(value.ordinal() + 1 + " - " + value.getNome());
         }
-        int opcaoSegmento = getInt() - 1;
+        int opcaoSegmento = getInt(1, Segmentos.values().length) - 1;
         return Segmentos.values()[opcaoSegmento];
     }
 
@@ -369,7 +391,82 @@ public class Main {
         }
     }
 
+    private static Usuario login() {
+        while (true) {
+            System.out.println("Login de Acesso:");
+            String email = getEmail("Digite o seu e-mail:");
+            String senha = getSenha("Digite a sua senha:");
+
+            for (Usuario usuario : usuarios) {
+                if (usuario.getEmail().equals(email) && usuario.getSenha().equals(senha)) {
+                    return usuario;
+                }
+            }
+            System.out.println("E-mail ou Senha inválidos!");
+        }
+    }
+
+    private static void cadastrarUsuarioInicial() {
+        Usuario usuario = new Usuario("Administrador", "55347249005", "admin@senai.br",
+                "admin1234", List.of(PerfilAcesso.ADMINISTRATIVO, PerfilAcesso.RH, PerfilAcesso.OPERACIONAL));
+        usuarios.add(usuario);
+    }
+
+    private static void realizarProcessoAvaliacao() {
+        Trabalhador trabalhador = validacaoTrabalhador();
+
+        List<Modulo> modulosEmAvaliacao = trabalhador.getModulos().stream()
+                .filter(Modulo::isModuloEmAvaliacao).collect(Collectors.toList());
+
+        if (modulosEmAvaliacao.isEmpty()) {
+            System.out.println("Esse trabalhador não possui nenhum módulo em fase de avaliação!!");
+            return;
+        }
+
+        System.out.println("Selecione o módulo para realizar a avaliação:");
+        for (int i = 0; i < modulosEmAvaliacao.size(); i++) {
+            Modulo modulo = modulosEmAvaliacao.get(i);
+            System.out.println(i + 1 + " - " + modulo.getTrilha().getNomeTrilha() + " - " + modulo.getNomeModulo());
+        }
+        int tipoModulo = getInt(1, modulosEmAvaliacao.size()) - 1;
+        Modulo modulo = modulosEmAvaliacao.get(tipoModulo);
+
+        System.out.println("Digite a avaliação/score do módulo (1 a 5):");
+        int score = getInt(1, 5);
+        String anotacoes = getString("Digite as anotações para a avaliação do módulo:");
+
+        Avaliacao avaliacao = new Avaliacao(trabalhador, modulo, score, anotacoes);
+        modulo.getAvaliacoes().add(avaliacao);
+    }
+
+    private static void acompanharProcessoAvaliacao() {
+        Modulo modulo = validacaoModulo();
+
+        if (modulo.getAvaliacoes().isEmpty()) {
+            System.out.println("Ainda não foram realizadas avaliações para o módulo");
+        } else {
+            System.out.println("Avaliações do módulo:");
+            for (Avaliacao avaliacao : modulo.getAvaliacoes()) {
+                System.out.println(avaliacao);
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        menuAdministrativo();
+        cadastrarUsuarioInicial();
+        System.out.println("Seja bem-vindo ao Habilit Pro");
+        Usuario usuario = login();
+        while (true) {
+            System.out.println("Selecione qual menu deseja visualizar:");
+            for (int i = 0; i < usuario.getPerfis().size(); i++) {
+                System.out.println(i + 1 + " " + usuario.getPerfis().get(i).getNome());
+            }
+            int tipoMenu = getInt(1, usuario.getPerfis().size()) - 1;
+
+            PerfilAcesso perfilAcesso = usuario.getPerfis().get(tipoMenu);
+            if (perfilAcesso == PerfilAcesso.ADMINISTRATIVO) menuAdministrativo();
+            else if (perfilAcesso == PerfilAcesso.OPERACIONAL) menuOperacional();
+            else if (perfilAcesso == PerfilAcesso.RH) menuRh();
+        }
     }
 }

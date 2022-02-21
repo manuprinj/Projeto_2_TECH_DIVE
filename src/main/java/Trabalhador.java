@@ -12,10 +12,9 @@ public class Trabalhador {
     private LocalDate dataAlteracao;
     private List<Trilha> trilhas;
     private List<Modulo> modulos;
-    private List<Integer> avaliacoes;
 
     public Trabalhador(String nome, String cpf, Empresa empresa, String areaSetor, String funcao,
-            LocalDate dataAlteracao, List<Trilha> trilhas, List<Modulo> modulos, List<Integer> avaliacoes) {
+            LocalDate dataAlteracao, List<Trilha> trilhas, List<Modulo> modulos) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
@@ -24,7 +23,6 @@ public class Trabalhador {
         this.dataAlteracao = dataAlteracao;
         this.trilhas = trilhas;
         this.modulos = modulos;
-        this.avaliacoes = avaliacoes;
     }
 
     public String getNome() {
@@ -89,13 +87,5 @@ public class Trabalhador {
 
     public void setModulos(List<Modulo> modulos) {
         this.modulos = modulos;
-    }
-
-    public List<Integer> getAvaliacoes() {
-        return avaliacoes;
-    }
-
-    public void setAvaliacoes(List<Integer> avaliacoes) {
-        this.avaliacoes = avaliacoes;
     }
 }

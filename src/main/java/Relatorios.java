@@ -1,5 +1,9 @@
 import static utils.InputUtils.getInt;
 
+import java.util.ArrayList;
+
+import types.PerfilAcesso;
+
 
 public class Relatorios {
 

@@ -4,26 +4,26 @@ import types.PerfilAcesso;
 
 
 public class Usuario {
-    private String nomeTrabalhador;
+    private String nome;
     private String cpf;
     private String email;
     private String senha;
     private List<PerfilAcesso> perfis;
 
-    public Usuario(String nomeTrabalhador, String cpf, String email, String senha, List<PerfilAcesso> perfis) {
-        this.nomeTrabalhador = nomeTrabalhador;
+    public Usuario(String nome, String cpf, String email, String senha, List<PerfilAcesso> perfis) {
+        this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
         this.perfis = perfis;
     }
 
-    public String getNomeTrabalhador() {
-        return nomeTrabalhador;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeTrabalhador(String nomeTrabalhador) {
-        this.nomeTrabalhador = nomeTrabalhador;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getCpf() {
