@@ -6,16 +6,16 @@ public class Trabalhador {
 
     private String nome;
     private String cpf;
-    private String empresa;
+    private Empresa empresa;
     private String areaSetor;
     private String funcao;
     private LocalDate dataAlteracao;
     private List<Trilha> trilhas;
-    private List<Modulos> modulos;
+    private List<Modulo> modulos;
     private List<Integer> avaliacoes;
 
-    public Trabalhador(String nome, String cpf, String empresa, String areaSetor, String funcao,
-            LocalDate dataAlteracao, List<Trilha> trilhas, List<Modulos> modulos, List<Integer> avaliacoes) {
+    public Trabalhador(String nome, String cpf, Empresa empresa, String areaSetor, String funcao,
+            LocalDate dataAlteracao, List<Trilha> trilhas, List<Modulo> modulos, List<Integer> avaliacoes) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
@@ -43,11 +43,11 @@ public class Trabalhador {
         this.cpf = cpf;
     }
 
-    public String getEmpresa() {
+    public Empresa getEmpresa() {
         return empresa;
     }
 
-    public void setEmpresa(String empresa) {
+    public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
     }
 
@@ -83,11 +83,11 @@ public class Trabalhador {
         this.trilhas = trilhas;
     }
 
-    public List<Modulos> getModulos() {
+    public List<Modulo> getModulos() {
         return modulos;
     }
 
-    public void setModulos(List<Modulos> modulos) {
+    public void setModulos(List<Modulo> modulos) {
         this.modulos = modulos;
     }
 

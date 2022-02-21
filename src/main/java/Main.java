@@ -14,17 +14,15 @@ import types.Estados;
 import types.PerfilAcesso;
 import types.RegionaisSENAI;
 import types.Segmentos;
-import types.Status;
+import types.StatusModulo;
 import types.TipoEmpresa;
+import utils.DateUtils;
 
 
 public class Main {
 
     public static int opcaoTipoEmpresa;
-    public static int numeroSequencial = 1;
     public static List<Empresa> empresas = new ArrayList<>();
-    public static List<Trilha> trilhas = new ArrayList<>();
-    public static List<Modulos> modulos = new ArrayList<>();
     public static List<Trabalhador> trabalhadores = new ArrayList<>();
     public static List<Usuario> usuarios = new ArrayList<>();
 
@@ -37,7 +35,11 @@ public class Main {
             System.out.println("4 - Cadastrar Trabalhador");
             System.out.println("5 - Cadastrar Usuários");
             System.out.println("6 - Relatórios");
-            System.out.println("7 - Sair");
+            System.out.println("7 - Alterar Status do Módulo");
+            System.out.println("8 - Alterar Funçao do Trabalhador");
+            System.out.println("9 - Alterar Setor/Area do Trabalhador");
+            System.out.println("10 - Alterar Empresa do Trabalhador");
+            System.out.println("11 - Sair");
             int tipoOperacao = getInt();
 
             if (tipoOperacao == 1) cadastrarEmpresa();
@@ -45,8 +47,12 @@ public class Main {
             else if (tipoOperacao == 3) cadastrarModulo();
             else if (tipoOperacao == 4) cadastrarTrabalhador();
             else if (tipoOperacao == 5) cadastrarUsuario();
-            else if (tipoOperacao == 6) ;
-            else if (tipoOperacao == 7) return;
+            else if (tipoOperacao == 6) menuRelatorio();
+            else if (tipoOperacao == 7) alterarStatusModulo();
+            else if (tipoOperacao == 8) alterarFuncao();
+            else if (tipoOperacao == 9) alterarSetorArea();
+            else if (tipoOperacao == 10) alterarEmpresaTrabalhador();
+            else if (tipoOperacao == 11) return;
             else System.out.println("Digite uma opção válida!!");
 
         }
@@ -68,67 +74,125 @@ public class Main {
         Estados estado = getEstado();
         RegionaisSENAI regionalSenai = getRegional();
 
+        Empresa empresa;
         if (opcaoTipoEmpresa == TipoEmpresa.FILIAL.ordinal()) {
             String nomeFilial = getString("Digite o nome da Filial:");
-            Empresa empresa = new Empresa(nome, cnpj, tipoEmpresa, nomeFilial, segmento, cidade, estado, regionalSenai);
+            empresa = new Empresa(nome, cnpj, tipoEmpresa, nomeFilial, segmento, cidade, estado, regionalSenai);
             empresas.add(empresa);
             System.out.println(empresa);
         } else {
-            Empresa empresa = new Empresa(nome, cnpj, tipoEmpresa, segmento, cidade, estado, regionalSenai);
+            empresa = new Empresa(nome, cnpj, tipoEmpresa, segmento, cidade, estado, regionalSenai);
             empresas.add(empresa);
             System.out.println(empresa);
         }
 
+        while (true) {
+            String isContinuar = getString("Você deseja cadastrar uma nova trilha para esta empresa? (S/N)");
+            if (isContinuar.equals("S")) {
+                cadastrarTrilha(empresa);
+            } else {
+                return;
+            }
+        }
     }
 
     public static void cadastrarTrilha() {
+        Empresa empresa = validacaoEmpresa();
+        cadastrarTrilha(empresa);
+    }
+
+    public static void cadastrarTrilha(Empresa empresa) {
         System.out.println("CADASTRO DE TRILHAS");
-        String nomeEmpresa = validacaoEmpresa().getNomeEmpresa();
         String ocupacao = getString("Digite a ocupação da trilha:");
+        int contagem =
+                (int) empresa.getTrilhas().stream().filter(trilha -> trilha.getOcupacao().equals(ocupacao)).count() + 1;
         int anoAtual = LocalDate.now().getYear();
-        String nomeTrilha = (ocupacao + " | " + nomeEmpresa.toString() + " | " + numeroSequencial + " | " + anoAtual);
-        String apelidoTrilha = (ocupacao + " | " + numeroSequencial);
-        // Módulos
-        // String anotacoes = getString("Digite as anotações da trilha:");
+        String nomeTrilha = (ocupacao + " | " + empresa.getNomeEmpresa() + " | " + contagem + " | " + anoAtual);
+        String apelidoTrilha = (ocupacao + " | " + contagem);
 
-        Trilha trilha = new Trilha(nomeEmpresa, ocupacao, numeroSequencial, nomeTrilha, apelidoTrilha);
-        trilhas.add(trilha);
-        numeroSequencial++;
+        Trilha trilha = new Trilha(empresa, ocupacao, contagem, nomeTrilha, apelidoTrilha);
+        empresa.getTrilhas().add(trilha);
 
-        System.out.println(trilha);
+        String isContinuar;
+        do {
+            cadastrarModulo(trilha);
+            isContinuar = getString("Você deseja cadastrar outro módulo para esta trilha? (S/N)");
+        } while (isContinuar.equals("S"));
     }
 
     public static void cadastrarModulo() {
+        Trilha trilha = validacaoTrilha();
+        cadastrarModulo(trilha);
+    }
+
+    public static void cadastrarModulo(Trilha trilha) {
         System.out.println("CADASTRO DE MÓDULOS");
-        String nomeTrilha = validacaoTrilha().getNomeTrilha();
         String nomeModulo = getString("Digite o nome do módulo:");
-
-        System.out.println("Digite as habilidades:");
-        //pegar as habilidades
-
+        String habilidades = getString("Digite as habilidades:");
         String tarefaAvaliacao = getString("Digite as tarefas de validação do módulo:");
-        LocalDate prazoLimite = getData("Digite o prazo limite para avaliação (dd/MM/yyyy): ");
-        Status status = getStatus();
+        LocalDate prazoLimite = DateUtils.addDiasUteis(LocalDate.now(), 10);
+        StatusModulo statusModulo = getStatus();
 
-        Modulos modulo = new Modulos(nomeTrilha, nomeModulo, null, tarefaAvaliacao, prazoLimite, status);
-        modulos.add(modulo);
+        Modulo modulo = new Modulo(trilha, nomeModulo, habilidades, tarefaAvaliacao, prazoLimite, statusModulo);
+        trilha.getModulos().add(modulo);
+    }
+
+    public static void alterarStatusModulo() {
+        Modulo modulo = validacaoModulo();
+        StatusModulo statusModulo = getStatus();
+        modulo.setStatus(statusModulo);
+    }
+
+    public static void alterarFuncao() {
+        Trabalhador trabalhador = validacaoTrabalhador();
+        String funcao = getString("Digite a nova função do trabalhador:");
+        trabalhador.setFuncao(funcao);
+        trabalhador.setDataAlteracao(LocalDate.now());
+    }
+
+    public static void alterarSetorArea() {
+        Trabalhador trabalhador = validacaoTrabalhador();
+        String setorArea = getString("Digite o novo setor/área do trabalhador:");
+        trabalhador.setAreaSetor(setorArea);
+    }
+
+    public static void alterarEmpresaTrabalhador() {
+        Trabalhador trabalhador = validacaoTrabalhador();
+        Empresa empresa = validacaoEmpresa();
+        trabalhador.setEmpresa(empresa);
     }
 
     public static void cadastrarTrabalhador() {
         System.out.println("CADASTRO DE TRABALHOR");
         String nomeTrabalhador = getString("Digite o nome do trabalhador:");
         String cpf = getCPF("Digite o CPF do trabalhador:");
-        String nomeEmpresa = validacaoEmpresa().getNomeEmpresa();
+        Empresa empresa = validacaoEmpresa();
         String setorArea = getString("Digite o setor/área do trabalhador:");
         String funcao = getString("Digite a função do trabalhador:");
-        //        Data Modificação
-        //        String nomeTrilha = validacaoTrilha().getNomeTrilha();
-        //        String nomeModulo = getString("Digite o nome do módulo:");
+        LocalDate data = getData("Digite a data da última alteração de função (dd/MM/yyyy):");
+
+        List<Trilha> trilhas = new ArrayList<>();
+        List<Modulo> modulos = new ArrayList<>();
+
+        String novaTrilha;
+        do {
+            Trilha trilha = validacaoTrilha(empresa);
+            String novoModulo;
+            do {
+                Modulo modulo = validacaoModulo(trilha);
+                modulos.add(modulo);
+                novoModulo = getString("Você deseja selecionar outro módulo desta trilha? (S/N)");
+            } while (novoModulo.equals("S"));
+            trilhas.add(trilha);
+            novaTrilha = getString("Você deseja selecionar outra trilha? (S/N)");
+        } while (novaTrilha.equals("S"));
+
+
         //        Avaliacao;
         //        Anotacoes;
 
         Trabalhador trabalhador =
-                new Trabalhador(nomeTrabalhador, cpf, nomeEmpresa, setorArea, funcao, null, null, null, null);
+                new Trabalhador(nomeTrabalhador, cpf, empresa, setorArea, funcao, data, trilhas, modulos, null);
         trabalhadores.add(trabalhador);
     }
 
@@ -138,11 +202,15 @@ public class Main {
         String cpf = getCPF("Digite o CPF do usuário:");
         String email = getEmail("Digite o e-mail do usuário:");
         String senha = getSenha("Digite a senha do usuário:");
-        PerfilAcesso perfilAcesso = getPerfilAcesso();
+        List<PerfilAcesso> perfis = new ArrayList<>();
+        String novoPerfilAcesso;
+        do {
+            perfis.add(getPerfilAcesso());
+            novoPerfilAcesso = getString("Você deseja selecionar outro módulo desta trilha? (S/N)");
+        } while (novoPerfilAcesso.equals("S"));
 
-        Usuario usuario = new Usuario(nomeTrabalhador, cpf, email, senha, perfilAcesso);
+        Usuario usuario = new Usuario(nomeTrabalhador, cpf, email, senha, perfis);
         usuarios.add(usuario);
-
     }
 
     private static TipoEmpresa getTipoEmpresa() {
@@ -181,13 +249,13 @@ public class Main {
         return RegionaisSENAI.values()[opcaoRegional];
     }
 
-    private static Status getStatus() {
+    private static StatusModulo getStatus() {
         System.out.println("Selecione o status:");
-        for (Status value : Status.values()) {
+        for (StatusModulo value : StatusModulo.values()) {
             System.out.println(value.ordinal() + 1 + " - " + value.getNome());
         }
         int opcaoStatus = getInt() - 1;
-        return Status.values()[opcaoStatus];
+        return StatusModulo.values()[opcaoStatus];
     }
 
     private static PerfilAcesso getPerfilAcesso() {
@@ -212,9 +280,13 @@ public class Main {
     }
 
     public static Trilha validacaoTrilha() {
+        Empresa empresa = validacaoEmpresa();
+        return validacaoTrilha(empresa);
+    }
+
+    public static Trilha validacaoTrilha(Empresa empresa) {
         while (true) {
-            Empresa empresa = validacaoEmpresa();
-            System.out.println("Selecione uma das trlhas disponiveis:");
+            System.out.println("Selecione uma das trilhas:");
             for (int i = 0; i < empresa.getTrilhas().size(); i++) {
                 System.out.println((i + 1) + " - " + empresa.getTrilhas().get(i).getNomeTrilha());
             }
@@ -223,6 +295,77 @@ public class Main {
                 return empresa.getTrilhas().get(opcaoTrilha);
             }
             System.out.println("Trilha não encontrada!");
+        }
+    }
+
+    public static Modulo validacaoModulo() {
+        Trilha trilha = validacaoTrilha();
+        return validacaoModulo(trilha);
+    }
+
+    public static Modulo validacaoModulo(Trilha trilha) {
+        while (true) {
+            System.out.println("Selecione um dos módulos:");
+            for (int i = 0; i < trilha.getModulos().size(); i++) {
+                System.out.println((i + 1) + " - " + trilha.getModulos().get(i).getNomeModulo());
+            }
+            int opcaoModulo = getInt() - 1;
+            if (opcaoModulo < trilha.getModulos().size()) {
+                return trilha.getModulos().get(opcaoModulo);
+            }
+            System.out.println("Modulo não encontrado!");
+        }
+    }
+
+    public static Trabalhador validacaoTrabalhador() {
+        while (true) {
+            String cpf = getCPF("Digite o CPF do trabalhador:");
+
+            for (Trabalhador trabalhador : trabalhadores) {
+                if (trabalhador.getCpf().equals(cpf)) return trabalhador;
+            }
+
+            System.out.println("Trabalhador não encontrado!");
+        }
+    }
+
+    public static void menuRelatorio() {
+        while (true) {
+            System.out.println("Seja bem-vindo ao Habilit Pro");
+            System.out.println("1 - Relatórios de Empresas");
+            System.out.println("2 - Relatórios de Trilhas");
+            System.out.println("3 - Relatórios de Módulos");
+            System.out.println("4 - Voltar");
+            int tipoOperacao = getInt();
+
+            if (tipoOperacao == 1) relatorioEmpresas();
+            else if (tipoOperacao == 2) relatorioTrilhas();
+            else if (tipoOperacao == 3) relatorioModulos();
+            else if (tipoOperacao == 4) return;
+            else System.out.println("Digite uma opção válida!!");
+        }
+    }
+
+    private static void relatorioEmpresas() {
+        System.out.println("Empresas:");
+        for (Empresa empresa : empresas) {
+            System.out.println(empresa);
+        }
+    }
+
+    private static void relatorioTrilhas() {
+        Empresa empresa = validacaoEmpresa();
+        System.out.println("Trilhas:");
+        for (Trilha trilha : empresa.getTrilhas()) {
+            System.out.println(trilha);
+        }
+    }
+
+    private static void relatorioModulos() {
+        Trilha trilha = validacaoTrilha();
+        System.out.println("Módulos:");
+        for (Modulo modulo : trilha.getModulos()) {
+            System.out.println(modulo);
         }
     }
 

@@ -50,9 +50,9 @@ public class Empresa {
         StringJoiner joiner = new StringJoiner(" | ")
                 .add("Nome: " + getNomeEmpresa())
                 .add("CNPJ: " + getMascaraCNPJ(getCnpj()))
-                .add("Tipo de Empresa: " + getTipo())
-                .add("Nome da Filial: " + getNomeFilial())
-                .add("Segmento: " + getSegmento())
+                .add("Tipo de Empresa: " + getTipo());
+        if (nomeFilial != null) joiner.add("Nome da Filial: " + getNomeFilial());
+        joiner.add("Segmento: " + getSegmento())
                 .add("Cidade: " + getCidade())
                 .add("Estado: " + getEstado())
                 .add("Regional: " + getRegional());

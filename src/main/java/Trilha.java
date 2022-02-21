@@ -4,16 +4,16 @@ import java.util.StringJoiner;
 
 public class Trilha {
 
-    private String empresa;
+    private Empresa empresa;
     private String ocupacao;
     private int numeroSequencial;
     private String nomeTrilha;
     private String apelidoTrilha;
-    private List<Modulos> modulos;
+    private List<Modulo> modulos;
     private int nivelSatisfacao;
     private String anotacoes;
 
-    public Trilha(String empresa, String ocupacao, int numeroSequencial, String nomeTrilha, String apelidoTrilha) {
+    public Trilha(Empresa empresa, String ocupacao, int numeroSequencial, String nomeTrilha, String apelidoTrilha) {
         this.empresa = empresa;
         this.ocupacao = ocupacao;
         this.numeroSequencial = numeroSequencial;
@@ -33,11 +33,11 @@ public class Trilha {
         return joiner.toString();
     }
 
-    public String getEmpresa() {
+    public Empresa getEmpresa() {
         return empresa;
     }
 
-    public void setEmpresa(String empresa) {
+    public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
     }
 
@@ -73,11 +73,11 @@ public class Trilha {
         this.apelidoTrilha = apelidoTrilha;
     }
 
-    public List<Modulos> getModulos() {
+    public List<Modulo> getModulos() {
         return modulos;
     }
 
-    public void setModulos(List<Modulos> modulos) {
+    public void setModulos(List<Modulo> modulos) {
         this.modulos = modulos;
     }
 

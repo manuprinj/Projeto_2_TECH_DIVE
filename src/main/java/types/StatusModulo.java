@@ -1,7 +1,7 @@
 package types;
 
 
-public enum Status {
+public enum StatusModulo {
 
     NAO_INICIADO("Curso não iniciado"),
     EM_ANDAMENTO("Curso em andamento"),
@@ -10,7 +10,7 @@ public enum Status {
 
     private final String nome;
 
-    Status(String nome) {
+    StatusModulo(String nome) {
         this.nome = nome;
     }
 

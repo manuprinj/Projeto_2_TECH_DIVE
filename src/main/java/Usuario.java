@@ -1,3 +1,5 @@
+import java.util.List;
+
 import types.PerfilAcesso;
 
 
@@ -6,14 +8,14 @@ public class Usuario {
     private String cpf;
     private String email;
     private String senha;
-    private PerfilAcesso perfilAcesso;
+    private List<PerfilAcesso> perfis;
 
-    public Usuario(String nomeTrabalhador, String cpf, String email, String senha, PerfilAcesso perfilAcesso) {
+    public Usuario(String nomeTrabalhador, String cpf, String email, String senha, List<PerfilAcesso> perfis) {
         this.nomeTrabalhador = nomeTrabalhador;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
-        this.perfilAcesso = perfilAcesso;
+        this.perfis = perfis;
     }
 
     public String getNomeTrabalhador() {
@@ -48,11 +50,11 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public PerfilAcesso getPerfilAcesso() {
-        return perfilAcesso;
+    public List<PerfilAcesso> getPerfis() {
+        return perfis;
     }
 
-    public void setPerfilAcesso(PerfilAcesso perfilAcesso) {
-        this.perfilAcesso = perfilAcesso;
+    public void setPerfis(List<PerfilAcesso> perfis) {
+        this.perfis = perfis;
     }
 }
