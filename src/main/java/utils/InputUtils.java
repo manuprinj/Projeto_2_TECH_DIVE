@@ -39,7 +39,7 @@ public class InputUtils {
     public static int getInt(int min, int max) {
         while (true) {
             int numero = getInt();
-            if (numero > min && numero < max) return numero;
+            if (numero >= min && numero <= max) return numero;
             System.out.println("Digite um número entre " + min + " e " + max);
         }
     }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -9,7 +10,7 @@ public class Trilha {
     private int numeroSequencial;
     private String nomeTrilha;
     private String apelidoTrilha;
-    private List<Modulo> modulos;
+    private List<Modulo> modulos = new ArrayList<>();
     private int nivelSatisfacao;
     private String anotacoes;
 

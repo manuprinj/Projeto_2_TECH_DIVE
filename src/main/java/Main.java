@@ -6,8 +6,11 @@ import static utils.InputUtils.getInt;
 import static utils.InputUtils.getSenha;
 import static utils.InputUtils.getString;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,7 +109,6 @@ public class Main {
             empresa = new Empresa(nome, cnpj, tipoEmpresa, segmento, cidade, estado, regionalSenai);
         }
         empresas.add(empresa);
-        System.out.println(empresa);
 
         while (true) {
             String isContinuar = getString("Você deseja cadastrar uma nova trilha para esta empresa? (S/N)");
@@ -394,8 +396,8 @@ public class Main {
     private static Usuario login() {
         while (true) {
             System.out.println("Login de Acesso:");
-            String email = getEmail("Digite o seu e-mail:");
-            String senha = getSenha("Digite a sua senha:");
+            String email = getString("Digite o seu e-mail:");
+            String senha = getString("Digite a sua senha:");
 
             for (Usuario usuario : usuarios) {
                 if (usuario.getEmail().equals(email) && usuario.getSenha().equals(senha)) {
@@ -407,8 +409,8 @@ public class Main {
     }
 
     private static void cadastrarUsuarioInicial() {
-        Usuario usuario = new Usuario("Administrador", "55347249005", "admin@senai.br",
-                "admin1234", List.of(PerfilAcesso.ADMINISTRATIVO, PerfilAcesso.RH, PerfilAcesso.OPERACIONAL));
+        Usuario usuario = new Usuario("Administrador", "55347249005", "admin",
+                "admin", List.of(PerfilAcesso.ADMINISTRATIVO, PerfilAcesso.OPERACIONAL, PerfilAcesso.RH));
         usuarios.add(usuario);
     }
 
@@ -446,9 +448,13 @@ public class Main {
             System.out.println("Ainda não foram realizadas avaliações para o módulo");
         } else {
             System.out.println("Avaliações do módulo:");
+            int soma = 0;
             for (Avaliacao avaliacao : modulo.getAvaliacoes()) {
                 System.out.println(avaliacao);
+                soma += avaliacao.getAvaliacao();
             }
+            BigDecimal media = BigDecimal.valueOf(soma).divide(BigDecimal.valueOf(modulo.getAvaliacoes().size()), 2, RoundingMode.HALF_EVEN);
+            System.out.println("Nível de satisfação (Geral): " + media.toString());
         }
     }
 
@@ -459,7 +465,7 @@ public class Main {
         while (true) {
             System.out.println("Selecione qual menu deseja visualizar:");
             for (int i = 0; i < usuario.getPerfis().size(); i++) {
-                System.out.println(i + 1 + " " + usuario.getPerfis().get(i).getNome());
+                System.out.println(i + 1 + " - " + usuario.getPerfis().get(i).getNome());
             }
             int tipoMenu = getInt(1, usuario.getPerfis().size()) - 1;
 
