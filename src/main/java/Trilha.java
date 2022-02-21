@@ -25,7 +25,7 @@ public class Trilha {
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(" | ")
-                .add("Nome Empresa: " + getEmpresa())
+                .add("Nome Empresa: " + getEmpresa().getNomeEmpresa())
                 .add("Ocupação: " + getOcupacao())
                 .add("Número Sequencial: " + getNumeroSequencial())
                 .add("Nome da Trilha: " + getNomeTrilha())

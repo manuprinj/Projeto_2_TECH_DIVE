@@ -1,8 +1,10 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import types.StatusModulo;
+import utils.DateUtils;
 
 
 public class Modulo {
@@ -23,6 +25,16 @@ public class Modulo {
         this.tarefaValidacao = tarefaValidacao;
         this.prazoLimite = prazoLimite;
         this.statusModulo = statusModulo;
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(" | ")
+                .add("Nome: " + getNomeModulo())
+                .add("Habilidades: " + getHabilidades())
+                .add("Prazo Limite: " + DateUtils.format(getPrazoLimite()))
+                .add("Status: " + getStatus());
+        return joiner.toString();
     }
 
     public boolean isModuloEmAvaliacao() {

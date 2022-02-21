@@ -467,7 +467,13 @@ public class Main {
             for (int i = 0; i < usuario.getPerfis().size(); i++) {
                 System.out.println(i + 1 + " - " + usuario.getPerfis().get(i).getNome());
             }
-            int tipoMenu = getInt(1, usuario.getPerfis().size()) - 1;
+            System.out.println(usuario.getPerfis().size() + 1 + " - Sair");
+            int tipoMenu = getInt(1, usuario.getPerfis().size() + 1) - 1;
+
+            if (tipoMenu == usuario.getPerfis().size()) {
+                login();
+                continue;
+            }
 
             PerfilAcesso perfilAcesso = usuario.getPerfis().get(tipoMenu);
             if (perfilAcesso == PerfilAcesso.ADMINISTRATIVO) menuAdministrativo();
